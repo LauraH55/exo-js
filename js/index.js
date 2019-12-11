@@ -11,27 +11,25 @@ let auth
 let user
 
 function initGAuth () {
-  console.log('init')
   auth = gapi.auth2.getAuthInstance()
-  auth.isSignedIn.listen(sigin)
-  sigin()
+  auth.isSignedIn.listen(loginStatus)
+  loginStatus()
 }
 
-function sigin () {
+function loginStatus () {
   const isSignedIn = auth.isSignedIn.get()
   if (isSignedIn) {
     user = auth.currentUser.get()
-    displayUser.style.display = 'inline-block' // affiche quand t'es connecté
+    displayUser.style.display = 'block'
     document.getElementById('name').
     textContent = user.getBasicProfile().getName()
     btnLogin.style.display = 'none'
-    btnLogout.style.display = 'inline-block'
+    btnLogout.style.display = 'block'
   } else {
     user = null
     displayUser.style.display = 'none'
-    btnLogin.style.display = 'inline-block'
+    btnLogin.style.display = 'block'
     btnLogout.style.display = 'none'
-
   }
   console.log(user)
 }
@@ -41,15 +39,19 @@ function loginGoogle () {
 }
 
 function logoutGoogle () {
-  auth.signOut();
+  auth.signOut().then(() => {
+    auth.disconnect()
+    auth.isSignedIn.set(null)
+    loginStatus()
+  });
 }
 
-if (typeof gapi === 'object' && gapi.load) { // pour tester le type de la variable // si type gapi = object et que gapi est une méthode.load
+if (typeof gapi === 'object' && gapi.load) {
   gapi.load('client', () => {
-    gapi.client.init({ // c'est une promise, appelle une méthode, si ok => then() sion catch()
+    gapi.client.init({
       apiKey: apiKey,
       clientId: clientId,
-      scope: 'profile', // scope, c'est ce qu'on veut récuperer sur google et afficher le profil
+      scope: 'profile',
     }).
     then(initGAuth)
   })
