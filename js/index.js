@@ -27,7 +27,10 @@ function loginStatus () {
     const xhr = new XMLHttpRequest() //prépare une requête AJAX qu'on envoie vers Google.php qu'on a fait. //debut de la requette HTTP
     xhr.onreadystatechange = function(){
       if (this.readyState === 4){
-        console.log(this.response)
+        const response = JSON.parse(this.response) // transforme du json en js
+        document.getElementById('image')
+        .setAttribute('src', response.picture)
+        console.log(this.response.picture)
       }
 
     }
@@ -57,7 +60,7 @@ function logoutGoogle () {
   auth.signOut().then(() => {
     auth.disconnect()
     auth.isSignedIn.set(null)
-    loginStatus()
+    window.location.href = 'logout.php'
   });
 }
 

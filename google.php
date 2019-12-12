@@ -1,5 +1,8 @@
 <?php
 
+session_start(); // démarre la session
+
+
 header('Content-Type: application/json'); // envoi des réponses Json
 
 require_once 'vendor/autoload.php'; // cherge les classes PHP
@@ -31,7 +34,14 @@ try { // verifie si le token existe
   die;
 }
 
-$userId = $payload['sub']; // sub = id chez google 
+$userId = $payload['sub']; // sub = id chez google
+
+$_SESSION['uid'] = $userId;
+$_SESSION['name'] = $payload['name'];
+$_SESSION['email'] = $payload['email'];
+$_SESSION['picture'] = $payload['picture'];
+
+
 
 echo json_encode($payload);
 
